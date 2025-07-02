@@ -13,10 +13,79 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ROOT
+  CONTRIBUTOR
+  VIEWER
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
   password  String
   apiKey    String   @unique
+  role      Role     @default(VIEWER)
   createdAt DateTime @default(now())
+
+  recipes Recipe[]
+}
+
+model Recipe {
+  id          String     @id @default(uuid())
+  title       String
+  gallery     String[] // array of image URLs
+  type        String[] // types like ["main", "dessert"]
+  otherNames  String[] // alternative names
+  description String
+  difficulty  Difficulty
+  duration    Int // duration in minutes
+  rate        Float      @default(0)
+  preparation String[] // step-by-step instructions
+  createdAt   DateTime   @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  regions     RecipeRegion[] // many-to-many
+  ingredients RecipeIngredient[] // many-to-many
+}
+
+model Region {
+  id        String @id @default(uuid())
+  title     String @unique
+  flagImage String // URL of the flag image
+
+  recipes RecipeRegion[]
+}
+
+model Ingredient {
+  id    String @id @default(uuid())
+  name  String @unique
+  image String // URL of ingredient image
+
+  recipes RecipeIngredient[]
+}
+
+model RecipeRegion {
+  id       String @id @default(uuid())
+  recipeId String
+  regionId String
+
+  recipe Recipe @relation(fields: [recipeId], references: [id])
+  region Region @relation(fields: [regionId], references: [id])
+}
+
+model RecipeIngredient {
+  id           String @id @default(uuid())
+  recipeId     String
+  ingredientId String
+
+  recipe     Recipe     @relation(fields: [recipeId], references: [id])
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
 }
