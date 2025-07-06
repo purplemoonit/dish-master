@@ -15,7 +15,7 @@ export class KitchenTipsService {
     try {
       return await this.prisma.kitchenTip.create({ data: dto });
     } catch (error) {
-      console.error('Failed to create kitchen tip', error);
+      console.log('Failed to create kitchen tip', error);
       throw new InternalServerErrorException('Failed to create kitchen tip');
     }
   }
@@ -26,7 +26,7 @@ export class KitchenTipsService {
         orderBy: { createdAt: 'desc' },
       });
     } catch (error) {
-      console.error('Failed to fetch kitchen tips:', error);
+      console.log('Failed to fetch kitchen tips:', error);
       throw new InternalServerErrorException('Failed to fetch kitchen tips');
     }
   }
@@ -82,7 +82,7 @@ export class KitchenTipsService {
         },
       });
     } catch (error) {
-      console.error('Failed to filter kitchen tips by tag:', error);
+      console.log('Failed to filter kitchen tips by tag:', error);
       throw new InternalServerErrorException('Failed to filter by tag');
     }
   }
@@ -99,7 +99,7 @@ export class KitchenTipsService {
         orderBy: { createdAt: 'desc' },
       });
     } catch (error) {
-      console.error('Failed to search kitchen tips:', error);
+      console.log('Failed to search kitchen tips:', error);
       throw new InternalServerErrorException('Failed to search kitchen tips');
     }
   }
