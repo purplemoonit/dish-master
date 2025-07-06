@@ -65,9 +65,13 @@ model Region {
 }
 
 model Ingredient {
-  id    String @id @default(uuid())
-  name  String @unique
-  image String // URL of ingredient image
+  id        String   @id @default(uuid())
+  name      String   @unique
+  image     String?
+  category  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isActive  Boolean  @default(true)
 
   recipes RecipeIngredient[]
 }
