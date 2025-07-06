@@ -107,3 +107,14 @@ model RecipeIngredient {
   recipe     Recipe     @relation(fields: [recipeId], references: [id])
   ingredient Ingredient @relation(fields: [ingredientId], references: [id])
 }
+
+model KitchenTip {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  image       String?
+  videoUrl    String?
+  tags        String[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
