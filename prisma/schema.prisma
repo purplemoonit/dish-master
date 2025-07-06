@@ -54,6 +54,20 @@ model Recipe {
 
   regions     RecipeRegion[] // many-to-many
   ingredients RecipeIngredient[] // many-to-many
+
+  cookingTips CookingTip[]
+}
+
+model CookingTip {
+  id          String @id @default(uuid())
+  title       String
+  description String
+
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Region {
