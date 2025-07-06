@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CookingTipsController } from './cooking-tips.controller';
 import { CookingTipsService } from './cooking-tips.service';
-import { Role } from '@prisma/client';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
 
 describe('CookingTipsController', () => {
