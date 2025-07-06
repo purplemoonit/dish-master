@@ -29,6 +29,14 @@ export class CookingTipsService {
   }
 
   async create(dto: CreateCookingTipDto) {
+    const recipe = await this.prisma.recipe.findUnique({
+      where: { id: dto.recipeId },
+    });
+
+    if (!recipe) {
+      throw new NotFoundException('Recipe not found for cooking tip');
+    }
+
     return this.prisma.cookingTip.create({
       data: {
         title: dto.title,
