@@ -43,16 +43,36 @@ async function main() {
 
   // 🥦 Ingredients
   const ingredients = [
-    { name: 'Tomato', image: 'https://example.com/ingredients/tomato.png' },
-    { name: 'Basil', image: 'https://example.com/ingredients/basil.png' },
-    { name: 'Chicken', image: 'https://example.com/ingredients/chicken.png' },
+    {
+      name: 'Tomato',
+      image: 'https://example.com/images/tomato.png',
+      category: 'Vegetables',
+      isActive: true,
+    },
+    {
+      name: 'Basil',
+      image: 'https://example.com/images/basil.png',
+      category: 'Herbs',
+      isActive: true,
+    },
+    {
+      name: 'Olive Oil',
+      image: 'https://example.com/images/olive-oil.png',
+      category: 'Oils',
+      isActive: true,
+    },
   ];
 
   for (const ingredient of ingredients) {
     await prisma.ingredient.upsert({
       where: { name: ingredient.name },
       update: {},
-      create: ingredient,
+      create: {
+        name: ingredient.name,
+        image: ingredient.image,
+        category: ingredient.category,
+        isActive: ingredient.isActive,
+      },
     });
   }
 
