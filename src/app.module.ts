@@ -7,6 +7,7 @@ import { RecipesModule } from './modules/recipes/recipes.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
 import { AuthModule } from './modules/users/auth/auth.module';
 import { CookingTipsModule } from './modules/cooking-tips/cooking-tips.module';
+import { KitchenTipsModule } from './modules/kitchen-tips/kitchen-tips.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { CookingTipsModule } from './modules/cooking-tips/cooking-tips.module';
     IngredientsModule,
     AuthModule,
     CookingTipsModule,
+    KitchenTipsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
