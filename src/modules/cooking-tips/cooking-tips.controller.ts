@@ -24,8 +24,8 @@ import {
   ApiBadRequestResponse,
   ApiQuery,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../users/auth/jwt-auth.guard';
-import { RolesGuard } from '../users/auth/roles.guard';
+import { JwtAuthGuard } from '../users/auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../users/auth/guards/roles.guard';
 import { Roles } from '../users/auth/roles.decorator';
 
 @ApiTags('Cooking Tips')
