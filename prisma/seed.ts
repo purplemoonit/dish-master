@@ -1,8 +1,30 @@
 import { PrismaClient, Role } from '@prisma/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  // 🌍 Regions
+  const filePath = path.join(
+    __dirname,
+    'seed-data',
+    'countries-flag-json.json',
+  );
+  const data = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+
+  for (const region of data) {
+    await prisma.region.upsert({
+      where: { title: region.title },
+      update: {},
+      create: {
+        title: region.title,
+        flagImage: region.flagImage,
+      },
+    });
+  }
+
+  console.log('✅ Seeded regions with flags');
   // 👤 Users
   await prisma.user.upsert({
     where: { email: 'root@example.com' },

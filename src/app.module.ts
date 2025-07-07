@@ -8,6 +8,7 @@ import { IngredientsModule } from './modules/ingredients/ingredients.module';
 import { AuthModule } from './modules/users/auth/auth.module';
 import { CookingTipsModule } from './modules/cooking-tips/cooking-tips.module';
 import { KitchenTipsModule } from './modules/kitchen-tips/kitchen-tips.module';
+import { RegionModule } from './modules/region/region.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { KitchenTipsModule } from './modules/kitchen-tips/kitchen-tips.module';
     AuthModule,
     CookingTipsModule,
     KitchenTipsModule,
+    RegionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
