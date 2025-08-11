@@ -128,6 +128,7 @@ export class RecipesService {
   async remove(id: string) {
     try {
       return await this.prisma.recipe.delete({ where: { id } });
+      console.log('Recipe deleted successfully');
     } catch (error) {
       throw new InternalServerErrorException('Delete failed');
     }
