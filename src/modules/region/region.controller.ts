@@ -21,10 +21,10 @@ import {
   ApiUnauthorizedResponse,
   ApiForbiddenResponse,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../users/auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../users/auth/guards/roles.guard';
+import { JwtAuthGuard } from '../user/auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../user/auth/guards/roles.guard';
 import { Role } from '@prisma/client';
-import { Roles } from '../users/auth/roles.decorator';
+import { Roles } from '../user/auth/roles.decorator';
 
 @ApiTags('Regions')
 @ApiBearerAuth()

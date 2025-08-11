@@ -1,8 +1,8 @@
 import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtAuthGuard } from '../users/auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../users/auth/guards/roles.guard';
+import { JwtAuthGuard } from '../user/auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../user/auth/guards/roles.guard';
 import { RegionController } from './region.controller';
 import { RegionsService } from './region.service';
 

@@ -23,6 +23,7 @@ import {
   ApiForbiddenResponse,
   ApiNotFoundResponse,
 } from '@nestjs/swagger';
+import { ApiKeyResponseDto } from './dto/api-key.dto';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -39,6 +40,21 @@ export class UsersController {
     return this.usersService.getUserById(req.user.sub);
   }
 
+  @Get('me/api-key')
+  @ApiOperation({ summary: 'Get current API key' })
+  @ApiOkResponse({
+    description: 'Current API key returned',
+    type: ApiKeyResponseDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  getApiKey(@Req() req): Promise<ApiKeyResponseDto> {
+    return this.usersService.getUserById(req.user.sub).then((user) => ({
+      apiKey: user.apiKey,
+    }));
+  }
+
   @Get()
   @UseGuards(RolesGuard)
   @Roles(Role.ROOT)
@@ -49,10 +65,22 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
+  // @Patch('regenerate-api-key')
+  // @ApiOperation({ summary: 'Regenerate API key for current user' })
+  // @ApiOkResponse({ description: 'API key regenerated' })
+  // regenerateApiKey(@Req() req) {
+  //   return this.usersService.regenerateApiKey(req.user.sub);
+  // }
   @Patch('regenerate-api-key')
   @ApiOperation({ summary: 'Regenerate API key for current user' })
-  @ApiOkResponse({ description: 'API key regenerated' })
-  regenerateApiKey(@Req() req) {
+  @ApiOkResponse({
+    description: 'API key regenerated',
+    type: ApiKeyResponseDto,
+  })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  regenerateApiKey(@Req() req): Promise<ApiKeyResponseDto> {
     return this.usersService.regenerateApiKey(req.user.sub);
   }
 
