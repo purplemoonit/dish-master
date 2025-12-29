@@ -2,25 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
-import { UsersModule } from './modules/users/users.module';
-import { RecipesModule } from './modules/recipes/recipes.module';
-import { IngredientsModule } from './modules/ingredients/ingredients.module';
-import { AuthModule } from './modules/users/auth/auth.module';
-import { CookingTipsModule } from './modules/cooking-tips/cooking-tips.module';
-import { KitchenTipsModule } from './modules/kitchen-tips/kitchen-tips.module';
-import { RegionModule } from './modules/region/region.module';
+import { UserModule } from './features/user/user.module';
+import { AuthModule } from './features/auth/auth.module';
 
 @Module({
-  imports: [
-    PrismaModule,
-    UsersModule,
-    RecipesModule,
-    IngredientsModule,
-    AuthModule,
-    CookingTipsModule,
-    KitchenTipsModule,
-    RegionModule,
-  ],
+  imports: [PrismaModule, UserModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

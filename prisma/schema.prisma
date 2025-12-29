@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -13,108 +7,205 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ROOT
-  CONTRIBUTOR
-  VIEWER
-}
-
 enum Difficulty {
-  EASY
-  MEDIUM
-  HARD
+  easy
+  medium
+  hard
 }
 
-model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  apiKey    String   @unique
-  role      Role     @default(VIEWER)
-  createdAt DateTime @default(now())
-
-  recipes Recipe[]
-}
-
+// =========================
+// Recipe
+// =========================
 model Recipe {
-  id          String     @id @default(uuid())
-  title       String
-  gallery     String[] // array of image URLs
-  type        String[] // types like ["main", "dessert"]
-  otherNames  String[] // alternative names
-  description String
-  difficulty  Difficulty
-  duration    Int // duration in minutes
-  rate        Float      @default(0)
-  preparation String[] // step-by-step instructions
-  createdAt   DateTime   @default(now())
+  id           String     @id @default(uuid())
+  slug         String     @unique
+  names        Json
+  description  Json
+  instructions Json
+  times        Json
+  difficulty   Difficulty
+  servings     Int
+  calories     Json
+  nutrition    Json?
+  storage      Json?
+  hasTips      Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  // Country relation
+  countryId String?
+  country   Country? @relation(fields: [countryId], references: [id])
 
-  regions     RecipeRegion[] // many-to-many
-  ingredients RecipeIngredient[] // many-to-many
-
-  cookingTips CookingTip[]
+  // Relations
+  ingredients RecipeIngredient[] @relation("RecipeToIngredient")
+  tags        RecipeTag[]        @relation("RecipeToTag")
+  methods     RecipeMethod[]     @relation("RecipeToMethod")
+  equipment   RecipeEquipment[]  @relation("RecipeToEquipment")
+  allergens   RecipeAllergen[]   @relation("RecipeToAllergen")
+  seasons     RecipeSeason[]     @relation("RecipeToSeason")
+  occasions   RecipeOccasion[]   @relation("RecipeToOccasion")
 }
 
-model CookingTip {
-  id          String @id @default(uuid())
-  title       String
-  description String
-
-  recipeId String
-  recipe   Recipe @relation(fields: [recipeId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Region {
-  id        String @id @default(uuid())
-  title     String @unique
-  flagImage String // URL of the flag image
-
-  recipes RecipeRegion[]
-}
-
-model Ingredient {
+// =========================
+// Country
+// =========================
+model Country {
   id        String   @id @default(uuid())
   name      String   @unique
-  image     String?
-  category  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isActive  Boolean  @default(true)
-
-  recipes RecipeIngredient[]
+  flagImage String?
+  recipes   Recipe[]
 }
 
-model RecipeRegion {
-  id       String @id @default(uuid())
-  recipeId String
-  regionId String
+// =========================
+// Ingredient
+// =========================
+model Ingredient {
+  id         String  @id @default(uuid())
+  name       Json
+  isAllergen Boolean @default(false)
 
-  recipe Recipe @relation(fields: [recipeId], references: [id])
-  region Region @relation(fields: [regionId], references: [id])
+  recipes RecipeIngredient[] @relation("IngredientToRecipe")
 }
 
 model RecipeIngredient {
-  id           String @id @default(uuid())
   recipeId     String
   ingredientId String
+  quantity     String
+  optional     Boolean @default(false)
 
-  recipe     Recipe     @relation(fields: [recipeId], references: [id])
-  ingredient Ingredient @relation(fields: [ingredientId], references: [id])
+  recipe     Recipe     @relation(fields: [recipeId], references: [id], name: "RecipeToIngredient", onDelete: Cascade)
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id], name: "IngredientToRecipe", onDelete: Cascade)
+
+  @@id([recipeId, ingredientId])
 }
 
-model KitchenTip {
-  id          String   @id @default(uuid())
-  title       String
-  description String
-  image       String?
-  videoUrl    String?
-  tags        String[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+// =========================
+// Tag
+// =========================
+model Tag {
+  id      String      @id @default(uuid())
+  name    String      @unique
+  recipes RecipeTag[] @relation("TagToRecipe")
+}
+
+model RecipeTag {
+  recipeId String
+  tagId    String
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], name: "RecipeToTag", onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], name: "TagToRecipe", onDelete: Cascade)
+
+  @@id([recipeId, tagId])
+}
+
+// =========================
+// Cooking Method
+// =========================
+model CookingMethod {
+  id      String         @id @default(uuid())
+  name    String         @unique
+  recipes RecipeMethod[] @relation("MethodToRecipe")
+}
+
+model RecipeMethod {
+  recipeId String
+  methodId String
+
+  recipe Recipe        @relation(fields: [recipeId], references: [id], name: "RecipeToMethod", onDelete: Cascade)
+  method CookingMethod @relation(fields: [methodId], references: [id], name: "MethodToRecipe", onDelete: Cascade)
+
+  @@id([recipeId, methodId])
+}
+
+// =========================
+// Equipment
+// =========================
+model Equipment {
+  id      String            @id @default(uuid())
+  name    String            @unique
+  recipes RecipeEquipment[] @relation("EquipmentToRecipe")
+}
+
+model RecipeEquipment {
+  recipeId    String
+  equipmentId String
+
+  recipe    Recipe    @relation(fields: [recipeId], references: [id], name: "RecipeToEquipment", onDelete: Cascade)
+  equipment Equipment @relation(fields: [equipmentId], references: [id], name: "EquipmentToRecipe", onDelete: Cascade)
+
+  @@id([recipeId, equipmentId])
+}
+
+// =========================
+// Allergen
+// =========================
+model Allergen {
+  id      String           @id @default(uuid())
+  name    String           @unique
+  recipes RecipeAllergen[] @relation("AllergenToRecipe")
+}
+
+model RecipeAllergen {
+  recipeId   String
+  allergenId String
+
+  recipe   Recipe   @relation(fields: [recipeId], references: [id], name: "RecipeToAllergen", onDelete: Cascade)
+  allergen Allergen @relation(fields: [allergenId], references: [id], name: "AllergenToRecipe", onDelete: Cascade)
+
+  @@id([recipeId, allergenId])
+}
+
+// =========================
+// Season
+// =========================
+model Season {
+  id      String         @id @default(uuid())
+  name    String         @unique
+  recipes RecipeSeason[] @relation("SeasonToRecipe")
+}
+
+model RecipeSeason {
+  recipeId String
+  seasonId String
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], name: "RecipeToSeason", onDelete: Cascade)
+  season Season @relation(fields: [seasonId], references: [id], name: "SeasonToRecipe", onDelete: Cascade)
+
+  @@id([recipeId, seasonId])
+}
+
+// =========================
+// Occasion
+// =========================
+model Occasion {
+  id      String           @id @default(uuid())
+  name    String           @unique
+  recipes RecipeOccasion[] @relation("OccasionToRecipe")
+}
+
+model RecipeOccasion {
+  recipeId   String
+  occasionId String
+
+  recipe   Recipe   @relation(fields: [recipeId], references: [id], name: "RecipeToOccasion", onDelete: Cascade)
+  occasion Occasion @relation(fields: [occasionId], references: [id], name: "OccasionToRecipe", onDelete: Cascade)
+
+  @@id([recipeId, occasionId])
+}
+
+model User {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  password   String
+  name       String?
+  role       UserRole @default(VIEWER)
+  apiKey     String?  @unique
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+enum UserRole {
+  VIEWER       // Read-only access
+  CONTRIBUTOR  // Create / Update / Delete recipes
+  ADMIN        // Full access, manage users
 }
